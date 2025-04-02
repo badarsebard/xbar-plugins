@@ -1,7 +1,7 @@
 #!/usr/bin/env -S PATH="${PATH}:/opt/homebrew/bin:/usr/local/bin" PYTHONIOENCODING=UTF-8 python3
 
 # <xbar.title>LastPass</xbar.title>
-# <xbar.version>v1.0.2</xbar.version>
+# <xbar.version>v1.0.3</xbar.version>
 # <xbar.author>Jason Rauen</xbar.author>
 # <xbar.author.github>badarsebard</xbar.author.github>
 # <xbar.desc>Display your LastPass vault in the menubar. Utilizes the LastPass CLI tool (https://github.com/lastpass/lastpass-cli).</xbar.desc>
@@ -22,6 +22,8 @@ import subprocess
 import sys
 
 lpass = "/usr/local/bin/lpass"
+log_dir = os.path.join(os.getcwd(), os.pardir, "logs")
+log_file = os.path.join(log_dir, "lastpass.log")
 
 class App:
     def __init__(self):
@@ -53,7 +55,7 @@ class App:
         try:
             creds = json.loads(show.stdout.decode())
         except json.JSONDecodeError as e:
-            with open("lastpass.py.error.json", "a") as f:
+            with open("lastpass.log", "a") as f:
                 error = {
                     "exception_type": str(type(e)),
                     "exception": str(e),
@@ -199,6 +201,8 @@ def main():
     app.render()
 
 if __name__ == '__main__':
+    if not os.path.exists(log_dir):
+        os.makedirs(log_dir)
     if len(sys.argv) == 1:
         main()
     elif sys.argv[1] == "update_setting":
